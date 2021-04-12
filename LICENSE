@@ -201,3 +201,20 @@ Copyright 2020 The MMSegmentation Authors. All rights reserved.
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
+
+
+   ======================================================================================
+   Swin-Transformer-Semantic-Segmentation Subcomponents:
+
+   The Swin-Transformer-Semantic-Segmentation project contains subcomponents with separate
+   copyright notices and license terms. Your use of the source code for the these
+   subcomponents is subject to the terms and conditions of the following licenses.
+
+   =======================================================================================
+   MIT license
+   =======================================================================================
+
+   The following components are provided under an MIT license.
+
+   1. swin_transformer.py - For details, mmseg/models/backbones/swin_transformer.py
+       Copyright (c) 2021 Microsoft
