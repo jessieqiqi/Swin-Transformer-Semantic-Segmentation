@@ -4,6 +4,8 @@ This repo contains the supported code and configuration files to reproduce seman
 
 ## Updates
 
+***05/11/2021*** Models for [MoBY](https://github.com/SwinTransformer/Transformer-SSL) are released
+
 ***04/12/2021*** Initial commits
 
 ## Results and Models
@@ -20,6 +22,19 @@ This repo contains the supported code and configuration files to reproduce seman
 
 - **Pre-trained models can be downloaded from [Swin Transformer for ImageNet Classification](https://github.com/microsoft/Swin-Transformer)**.
 - Access code for `baidu` is `swin`.
+
+## Results of MoBY with Swin Transformer
+
+### ADE20K
+
+| Backbone | Method | Crop Size | Lr Schd | mIoU | mIoU (ms+flip) | #params | FLOPs | config | log | model |
+| :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| Swin-T | UPerNet | 512x512 | 160K | 44.06 | 45.58 | 60M | 945G | [config](configs/swin/upernet_swin_tiny_patch4_window7_512x512_160k_ade20k.py) | [github](https://github.com/SwinTransformer/storage/releases/download/v1.0.3/moby_upernet_swin_tiny_patch4_window7_512x512.log.json)/[baidu](https://pan.baidu.com/s/1i0EMiapoQ-otkDmx-_cJHg) | [github](https://github.com/SwinTransformer/storage/releases/download/v1.0.3/moby_upernet_swin_tiny_patch4_window7_512x512.pth)/[baidu](https://pan.baidu.com/s/1BYgtgkHQV89bGC7LQLS7Jw) |
+
+**Notes**:
+
+- The learning rate needs to be tuned for best practice.
+- MoBY pre-trained models can be downloaded from [MoBY with Swin Transformer](https://github.com/SwinTransformer/Transformer-SSL).
 
 ## Usage
 
@@ -74,3 +89,5 @@ tools/dist_train.sh configs/swin/upernet_swin_tiny_patch4_window7_512x512_160k_a
 > **Image Classification**: See [Swin Transformer for Image Classification](https://github.com/microsoft/Swin-Transformer).
 
 > **Object Detection**: See [Swin Transformer for Object Detection](https://github.com/SwinTransformer/Swin-Transformer-Object-Detection).
+
+> **Self-Supervised Learning**: See [MoBY with Swin Transformer](https://github.com/SwinTransformer/Transformer-SSL).
