@@ -91,3 +91,5 @@ tools/dist_train.sh configs/swin/upernet_swin_tiny_patch4_window7_512x512_160k_a
 > **Object Detection**: See [Swin Transformer for Object Detection](https://github.com/SwinTransformer/Swin-Transformer-Object-Detection).
 
 > **Self-Supervised Learning**: See [MoBY with Swin Transformer](https://github.com/SwinTransformer/Transformer-SSL).
+
+> **Video Recognition**, See [Video Swin Transformer](https://github.com/SwinTransformer/Video-Swin-Transformer).
