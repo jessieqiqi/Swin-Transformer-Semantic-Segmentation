@@ -27,7 +27,6 @@ def parser():
     parser.add_argument("-l", "--list", action="store_true", help="list information about available checkpoints")
     args = parser.parse_args()
 
-
     if args.list:
         print("\nList available checkpoints:")
         for i, c in enumerate(checkpoints):
@@ -70,7 +69,6 @@ def demo(img_path, config_file, checkpoint_file):
     # save result
     output_path = f'demo/{splitext(basename(img_path))[0]}_output.jpg'
     model.show_result(img_path, result, palette=get_palette('ade20k'), out_file=output_path)
-
     return result
 
 
