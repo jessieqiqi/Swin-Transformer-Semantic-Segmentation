@@ -27,13 +27,14 @@ def parser():
     parser.add_argument("-l", "--list", action="store_true", help="list information about available checkpoints")
     args = parser.parse_args()
 
+
     if args.list:
         print("\nList available checkpoints:")
         for i, c in enumerate(checkpoints):
             print(f"index: {i} | path: {basename(c)}")
         print("\n")
 
-    if not (args.checkpoint_index and args.img_path):
+    if args.checkpoint_index is None or args.img_path is None:
         return
 
     if len(checkpoints) < args.checkpoint_index:
@@ -44,25 +45,21 @@ def parser():
 
 
 def save_masked_image(img_path, result):
+    makedirs(f'demo/dst_{splitext(basename(img_path))[0]}', exist_ok=True)
     img = np.array(Image.open(img_path))
-    for class_index, mask_by_class in enumerate(result[1]):
-        if not mask_by_class:
-            continue
-        for instance_index, mask_by_insetance in enumerate(mask_by_class):
-            mask = mask_by_insetance.astype(np.uint8)
-            if mask.shape[:2] != img.shape[:2]:
-                mask = np.array(Image.fromarray(mask).resize((img.shape[1], img.shape[0]), Image.BICUBIC))
-            mask = mask.reshape(*mask.shape, 1)
+    result = np.array(result)[0]
+    
+    # ADE20K has 150 classes
+    for i in [12, 24, 67]:
+        mask = result == np.full(result.shape, i)
+        mask = mask.astype(np.uint8)
+        if mask.shape[:2] != img.shape[:2]:
+            mask = np.array(Image.fromarray(mask).resize((img.shape[1], img.shape[0]), Image.BICUBIC))
+        mask = mask.reshape(*mask.shape, 1)
 
-            dst = img * mask
-            scale = mask.shape[0]/mask_by_insetance.astype(np.uint8).shape[0]
-            coord = (scale*np.array(result[0][class_index][instance_index])).astype(np.uint16)[:4]
-            dst = dst[coord[1]:coord[3], coord[0]:coord[2]]
-
-            makedirs(f'demo/dst_{splitext(basename(img_path))[0]}', exist_ok=True)
-
-            dst_path = f'demo/dst_{splitext(basename(img_path))[0]}/{splitext(basename(img_path))[0]}_class{str(class_index).zfill(2)}_{str(instance_index).zfill(3)}.jpg'
-            Image.fromarray(dst.astype(np.uint8)).save(dst_path)
+        dst = img * mask
+        dst_path = f'demo/dst_{splitext(basename(img_path))[0]}/{splitext(basename(img_path))[0]}_class{str(i).zfill(3)}.jpg'
+        Image.fromarray(dst.astype(np.uint8)).save(dst_path)
 
 
 def demo(img_path, config_file, checkpoint_file):
@@ -85,10 +82,9 @@ def main():
     checkpoint_index  = args.checkpoint_index
     img_path          = args.img_path
     original_img_path = args.original_img_path if args.original_img_path else args.img_path
-
+    
     result = demo(img_path, configs[checkpoint_index], checkpoints[checkpoint_index])
-    print(np.array(result).shape)
-    # save_masked_image(original_img_path, result)
+    save_masked_image(original_img_path, result)
 
 
 if __name__ == "__main__":
