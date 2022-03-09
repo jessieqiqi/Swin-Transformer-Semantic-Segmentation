@@ -49,6 +49,7 @@ def save_masked_image(img_path, result):
     result = np.array(result)[0]
     
     # ADE20K has 150 classes
+    # person, shelf, book respectively
     for i in [12, 24, 67]:
         mask = result == np.full(result.shape, i)
         mask = mask.astype(np.uint8)
