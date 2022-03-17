@@ -19,6 +19,36 @@ checkpoints = [
 device = 'cuda:0'
 
 
+def save_masked_image(img_path, result):
+    makedirs(f'data/outputs/dst_{splitext(basename(img_path))[0]}', exist_ok=True)
+    img = np.array(Image.open(img_path))
+    result = np.array(result)[0]
+    
+    # ADE20K has 150 classes
+    # person, shelf, book respectively
+    for i in [12, 24, 67]:
+        mask = result == np.full(result.shape, i)
+        mask = mask.astype(np.uint8)
+        if mask.shape[:2] != img.shape[:2]:
+            mask = np.array(Image.fromarray(mask).resize((img.shape[1], img.shape[0]), Image.BICUBIC))
+        mask = mask.reshape(*mask.shape, 1)
+
+        dst = img * mask
+        dst_path = f'data/outputs/dst_{splitext(basename(img_path))[0]}/{splitext(basename(img_path))[0]}_class{str(i).zfill(3)}.jpg'
+        Image.fromarray(dst.astype(np.uint8)).save(dst_path)
+
+
+def demo(img_path, config_file, checkpoint_file):
+    model = init_segmentor(config_file, checkpoint_file, device=device)
+    result = inference_segmentor(model, img_path)
+    show_result_pyplot(model, img_path, result, get_palette('ade20k'))
+
+    # save result
+    output_path = f'data/outputs/{splitext(basename(img_path))[0]}_output.jpg'
+    model.show_result(img_path, result, palette=get_palette('ade20k'), out_file=output_path)
+    return result
+
+
 def parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("-c", "--checkpoint_index", type=int, help="index of checkpoint")
@@ -41,36 +71,6 @@ def parser():
         return
 
     return args
-
-
-def save_masked_image(img_path, result):
-    makedirs(f'demo/dst_{splitext(basename(img_path))[0]}', exist_ok=True)
-    img = np.array(Image.open(img_path))
-    result = np.array(result)[0]
-    
-    # ADE20K has 150 classes
-    # person, shelf, book respectively
-    for i in [12, 24, 67]:
-        mask = result == np.full(result.shape, i)
-        mask = mask.astype(np.uint8)
-        if mask.shape[:2] != img.shape[:2]:
-            mask = np.array(Image.fromarray(mask).resize((img.shape[1], img.shape[0]), Image.BICUBIC))
-        mask = mask.reshape(*mask.shape, 1)
-
-        dst = img * mask
-        dst_path = f'demo/dst_{splitext(basename(img_path))[0]}/{splitext(basename(img_path))[0]}_class{str(i).zfill(3)}.jpg'
-        Image.fromarray(dst.astype(np.uint8)).save(dst_path)
-
-
-def demo(img_path, config_file, checkpoint_file):
-    model = init_segmentor(config_file, checkpoint_file, device=device)
-    result = inference_segmentor(model, img_path)
-    show_result_pyplot(model, img_path, result, get_palette('ade20k'))
-
-    # save result
-    output_path = f'demo/{splitext(basename(img_path))[0]}_output.jpg'
-    model.show_result(img_path, result, palette=get_palette('ade20k'), out_file=output_path)
-    return result
 
 
 def main():
